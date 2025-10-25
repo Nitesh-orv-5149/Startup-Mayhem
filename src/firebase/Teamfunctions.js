@@ -1,51 +1,46 @@
-import db from "./config";
-import { addDoc,updateDoc,deleteDoc,setDoc,serverTimestamp,runTransaction,arrayUnion } from "firebase/firestore";
-
 import { doc, runTransaction, arrayUnion } from "firebase/firestore";
-import db from "./firebase/config";
+import db from "./config";
 
-export const buyCard = async (teamId, cardId) => {
-  const cardRef = doc(db, "cards", cardId);   // Specific card
-  const teamRef = doc(db, "teams", teamId);   // Specific team
+// teamUID and cardUID are the Firestore document IDs
+export async function buyCard(teamUID, cardUID) {
+  const cardRef = doc(db, "cards", cardUID);
+  const teamRef = doc(db, "teams", teamUID);
 
   try {
     await runTransaction(db, async (transaction) => {
-      // Step 1: Read both documents
+      // Step 1: Read both docs
       const cardSnap = await transaction.get(cardRef);
       const teamSnap = await transaction.get(teamRef);
 
-      if (!cardSnap.exists()) throw "Card not found";
-      if (!teamSnap.exists()) throw "Team not found";
+      if (!cardSnap.exists()) throw new Error("Card not found");
+      if (!teamSnap.exists()) throw new Error("Team not found");
 
-      const cardData = cardSnap.data();
-      const teamData = teamSnap.data();
+      const card = cardSnap.data();
+      const team = teamSnap.data();
 
-      const ownedCards = teamData.ownedCards || [];
-      const isSold = cardData.sold || false;
+      // Step 2: Validations
+      if (card.cardCount <= 0) throw new Error("Card sold out");
+      if (team.budget < card.price) throw new Error("Insufficient budget");
+      if ((team.ownedCards || []).includes(cardUID))
+        throw new Error("Already owned");
 
-      // Step 2: Check if the card is already bought
-      if (ownedCards.includes(cardId) || isSold) {
-        console.log("❌ Card already bought!");
-        return false; // Optional: return for UI
-      }
-
-      // Step 3: Update both documents atomically
-      transaction.update(teamRef, {
-        ownedCards: arrayUnion(cardId)
-      });
-
+      // Step 3: Apply updates atomically
       transaction.update(cardRef, {
-        sold: true
+        cardCount: card.cardCount - 1,
       });
 
-      console.log(`✅ Card ${cardId} successfully bought!`);
-      return true; // Optional: return success
+      transaction.update(teamRef, {
+        budget: team.budget - card.price,
+        ownedCards: arrayUnion(cardUID),
+      });
     });
-  } catch (e) {
-    console.error("Transaction failed: ", e);
+
+    console.log(`✅ ${teamUID} successfully bought ${cardUID}`);
+    return true;
+  } catch (error) {
+    console.error("❌ Transaction failed:", error.message);
     return false;
   }
 };
-
 
 

@@ -1,9 +1,10 @@
 import React from 'react'
+import Tests from './Tests'
 
 export default function App() {
   return (
-    <div className='text-red-900 '>
-      StartUp Mayhem
+    <div className=''>
+      <Tests/>
     </div>
   )
 }

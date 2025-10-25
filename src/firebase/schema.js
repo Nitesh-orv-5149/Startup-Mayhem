@@ -1,6 +1,7 @@
 const teamSchema = {
     teamId : String,
     startup : String,
+    sector : String,
     password : String,
     budget : Number,
     runway : Number,
@@ -8,6 +9,7 @@ const teamSchema = {
     ltv : Number,   
     power : String,
     weakness :String,
+    subtitle : String,
     ownedCards : []
 }
 
