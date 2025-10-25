@@ -1,0 +1,49 @@
+To import db anywhere
+
+import db from "path to folder/config"
+
+# add a doc 
+import {addDoc,updateDoc,deleteDoc} from 'firebase/firestore'
+1) use collection - points to the data 
+2) addDoc, addDocs - add the doctument to the firestore
+3) getDocs - read data from the firebase
+4)updateDoc , setDoc - update the firestore 
+5) deleteDoc - deletes the firestore 
+
+6) onSnapshot - real time updation of data to firestore( not realtime database)
+
+import { doc, runTransaction } from "firebase/firestore";
+import db from "./firebase/config";
+
+async function takeCoins(userId) { // requesting user id. 
+  const coinsRef = doc(db, "game", "rewards");     // Global coins
+  const userRef = doc(db, "users", userId);        // This user’s coins
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      // Step 1: Read both documents
+      const coinsSnap = await transaction.get(coinsRef);
+      const userSnap = await transaction.get(userRef);
+
+      if (!coinsSnap.exists()) throw "Global coins not found";
+      if (!userSnap.exists()) throw "User not found";
+
+      const available = coinsSnap.data().coinsLeft;
+      const currentUserCoins = userSnap.data().coins || 0;
+
+      // Step 2: Check if enough coins remain
+      if (available >= 10) {
+        // Step 3: Update both docs safely
+        transaction.update(coinsRef, { coinsLeft: available - 10 });
+        transaction.update(userRef, { coins: currentUserCoins + 10 });
+
+        console.log("✅ You got 10 coins!");
+      } else {
+        console.log("❌ No coins left!");
+      }
+    });
+  } catch (e) {
+    console.error("Transaction failed: ", e);
+  }
+} // first come first serve depends on which user request comes first that depends on netwrok speed of user, or the first user whose transaction will be completed first 
+
