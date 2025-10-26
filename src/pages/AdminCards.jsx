@@ -31,7 +31,7 @@ const AdminDashboard = () => {
                       : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
                   }`}
                 >
-                  <span className="material-symbols-outlined">style</span>
+                  
                   <p className="text-sm font-medium">Available Cards</p>
                 </button>
                 <button
@@ -42,7 +42,7 @@ const AdminDashboard = () => {
                       : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
                   }`}
                 >
-                  <span className="material-symbols-outlined">groups</span>
+                  
                   <p className="text-sm font-medium">Team Card Ownership</p>
                 </button>
               </nav>

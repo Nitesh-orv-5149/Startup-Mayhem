@@ -42,7 +42,7 @@ const AdminDashboard = () => {
                   activePage === "teamOwnership" ? "bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary" : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                 }`}
               >
-                <span className="material-symbols-outlined fill">group</span>
+                
                 <p className="text-sm font-medium">Team Card Ownership</p>
               </button>
               <button
@@ -51,7 +51,7 @@ const AdminDashboard = () => {
                   activePage === "availableCards" ? "bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary" : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                 }`}
               >
-                <span className="material-symbols-outlined">credit_card</span>
+                
                 <p className="text-sm font-medium">Available Cards</p>
               </button>
             </nav>
@@ -65,7 +65,7 @@ const AdminDashboard = () => {
                 <p className="text-sm font-medium">{darkMode ? "Light Mode" : "Dark Mode"}</p>
               </button>
               <button className="flex items-center gap-3 px-3 py-2 rounded-lg w-full text-left text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 mt-2">
-                <span className="material-symbols-outlined">logout</span>
+                
                 <p className="text-sm font-medium">Logout</p>
               </button>
             </div>

@@ -55,7 +55,7 @@ export default function Dashboard() {
 
           <nav className="flex flex-col gap-2">
             <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary">
-              <span className="material-symbols-outlined">groups</span>
+              
               <p className="text-sm font-medium leading-normal">Teams</p>
             </div>
           </nav>
