@@ -43,4 +43,17 @@ export async function buyCard(teamUID, cardUID) {
   }
 };
 
+export const listenToTeams = (callback) => {
+  const teamsRef = collection(db, "teams");
+
+  const unsubscribe = onSnapshot(teamsRef, (snapshot) => {
+    const teams = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    callback(teams);
+  });
+
+  return unsubscribe;
+};
 

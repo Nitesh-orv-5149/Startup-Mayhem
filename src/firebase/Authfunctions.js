@@ -31,3 +31,21 @@ export const getAuth = async (startup, password) => {
     return { success: false, message: "Error occurred, check console." };
   }
 };
+
+
+export const getAllTeams = async () => {
+  try {
+    const teamsRef = collection(db, "teams");
+    const snapshot = await getDocs(teamsRef);
+
+    const teams = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data()                                                                                                                                                                                      
+    }));
+
+    return teams;
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    return [];
+  }
+}

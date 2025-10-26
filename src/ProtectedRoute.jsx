@@ -1,8 +1,7 @@
-// ProtectedRoute.jsx
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, adminOnly = false }) => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (!user) {
@@ -11,12 +10,19 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (user.isAdmin) {
-    // Admin → redirect to admin dashboard
-    return <Navigate to="/admin/cards" replace />;
+    // Admins always go to /admin
+    if (!adminOnly) {
+      return <Navigate to="/admin/cards" replace />;
+    }
   }
 
-  // Regular user → redirect to homepage
-  return <Navigate to="/" replace />;
+  if (adminOnly && !user.isAdmin) {
+    // Block regular users from admin-only routes
+    return <Navigate to="/" replace />;
+  }
+
+  // Regular user accessing allowed route, or admin accessing admin route
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

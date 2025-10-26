@@ -63,7 +63,7 @@ const AdminApp = () => {
           <div className="w-full max-w-5xl overflow-hidden rounded-xl bg-white dark:bg-[#1a1a1a] shadow-2xl flex flex-col md:grid md:grid-cols-2 transition-all duration-300">
 
             {/* LEFT SECTION */}
-            <div className="flex flex-col justify-center items-center md:items-start p-8 sm:p-10 lg:p-12 bg-gray-50 dark:bg-[#141414] text-center md:text-left order-1 md:order-none">
+            <div className="flex flex-col justify-center items-center md:items-start p-8 sm:p-10 lg:p-12 bg-gray-50 dark:bg-[#141414] text-center md:text-left order-1 md:order-0">
               <div className="flex items-center justify-center md:justify-start gap-3 mb-6">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-white"></div>
                 <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">

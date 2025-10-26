@@ -7,6 +7,7 @@ export default function HomePage() {
   useEffect(() => {
     const unsubscribe = listenToAvailableCards((availableCards) => {
       setCards(availableCards);
+      console.log(availableCards)
     });
 
     return () => unsubscribe(); // cleanup listener
