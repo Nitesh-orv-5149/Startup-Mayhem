@@ -5,6 +5,7 @@ import AdminDashboard from "./pages/AdminCards";
 import AdminTeam from "./pages/AdminTeam";
 import HomePage from "./pages/HomePage";
 import ProtectedRoute from "./ProtectedRoute"; // import the wrapper
+import CardsPage from "./pages/CardsPage";
 
 export default function App() {
   return (
@@ -19,6 +20,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cards"
+          element={
+            <ProtectedRoute>
+              <CardsPage />
             </ProtectedRoute>
           }
         />
