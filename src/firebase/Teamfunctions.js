@@ -1,4 +1,4 @@
-import { doc, runTransaction, arrayUnion } from "firebase/firestore";
+import { doc, runTransaction, arrayUnion,onSnapshot } from "firebase/firestore";
 import db from "./config";
 
 // teamUID and cardUID are the Firestore document IDs
@@ -57,3 +57,31 @@ export const listenToTeams = (callback) => {
   return unsubscribe;
 };
 
+// 👂 Realtime listener for a single team's document
+export const getTeam = (teamId, callback) => {
+  try {
+    const teamRef = doc(db, "teams", teamId);
+
+    // Subscribe to real-time updates
+    const unsubscribe = onSnapshot(
+      teamRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          callback({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          console.warn("No such team document!");
+          callback(null);
+        }
+      },
+      (error) => {
+        console.error("Error listening to team:", error);
+        callback(null);
+      }
+    );
+
+    return unsubscribe; // 👈 Let caller clean up listener
+  } catch (error) {
+    console.error("getTeam() failed:", error);
+    return () => {}; // return dummy unsubscribe
+  }
+};

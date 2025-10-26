@@ -18,6 +18,7 @@ export default function ActionCard({ card, userId }) {
       <h3 className="font-bold">{card.cardName}</h3>
       <p>Price: ₹{card.price}</p>
       <p>Available: {card.cardCount}</p>
+      <p>Function: {card.cardFunction || "No function"}</p>
       <p>Effect: {card.effect || "No effect"}</p>
       <button
         disabled={card.cardCount <= 0}
