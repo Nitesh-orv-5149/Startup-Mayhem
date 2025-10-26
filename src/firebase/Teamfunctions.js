@@ -1,4 +1,4 @@
-import { doc, runTransaction, arrayUnion,onSnapshot } from "firebase/firestore";
+import { doc, runTransaction, arrayUnion,onSnapshot, collection, query } from "firebase/firestore";
 import db from "./config";
 
 // teamUID and cardUID are the Firestore document IDs
@@ -43,19 +43,25 @@ export async function buyCard(teamUID, cardUID) {
   }
 };
 
-export const listenToTeams = (callback) => {
+// Listen to all teams (sorted by teamScore or memberCount, whichever you use)
+export const listenToAvailableTeams = (callback) => {
   const teamsRef = collection(db, "teams");
+  const q = query(teamsRef);
 
-  const unsubscribe = onSnapshot(teamsRef, (snapshot) => {
-    const teams = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const teams = snapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      .sort((a, b) => b.score - a.score); // sort descending by score (adjust field name)
+
     callback(teams);
   });
 
   return unsubscribe;
 };
+
 
 // 👂 Realtime listener for a single team's document
 export const getTeam = (teamId, callback) => {

@@ -2,7 +2,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-const Navbar = () => {
+export default function NavbarAdmin() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
@@ -33,7 +33,7 @@ const Navbar = () => {
           } absolute md:static top-16 left-0 w-full md:w-auto bg-white dark:bg-[#1a1a1a] md:flex flex-col md:flex-row items-center md:gap-8 gap-4 px-6 md:px-0 py-4 md:py-0`}
         >
           <Link
-            to="/"
+            to="/admin/teams"
             className={`text-base font-medium ${
               location.pathname === "/"
                 ? "text-indigo-600 dark:text-indigo-400"
@@ -41,10 +41,10 @@ const Navbar = () => {
             } hover:text-indigo-500`}
             onClick={() => setOpen(false)}
           >
-            Home
+            Teams
           </Link>
           <Link
-            to="/cards"
+            to="/admin/cards"
             className={`text-base font-medium ${
               location.pathname === "/cards"
                 ? "text-indigo-600 dark:text-indigo-400"
@@ -59,5 +59,3 @@ const Navbar = () => {
     </nav>
   );
 };
-
-export default Navbar;
