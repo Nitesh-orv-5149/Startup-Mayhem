@@ -10,16 +10,9 @@ import ActionCard from "../components/ActionCard";
 const HomePage = () => {
   const { user } = useAuth();
   const userData = user?.userData || {};
-  // 🧠 Get logged-in user info from localStorage
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const currentUserId = storedUser?.id || null;
   const userBalance = userData?.budget || 0;
-  console.log("User Balance:", userBalance);
-
-
   const [cards, setCards] = useState([]);
-  const [history, setHistory] = useState([]);
-  const [cart, setCart] = useState({}); // { cardId: count }
+  console.log("User Balance:", userBalance);
   
   console.log("Current User:", user);
 

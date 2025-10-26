@@ -36,18 +36,22 @@ export async function createCard(cardData) {
 // Listen to all available cards (cardCount > 0)
 export const listenToAvailableCards = (callback) => {
   const cardsRef = collection(db, "cards");
-  const q = query(cardsRef, where("cardCount", ">", 0));
+  const q = query(cardsRef);
 
   const unsubscribe = onSnapshot(q, (snapshot) => {
-    const availableCards = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const availableCards = snapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      .sort((a, b) => b.cardCount - a.cardCount); // sort descending by cardCount
+
     callback(availableCards);
   });
 
   return unsubscribe;
 };
+
 
 // Update card count manually
 export const updateCardCount = async (cardId, newCount) => {
