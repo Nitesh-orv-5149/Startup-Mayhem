@@ -1,3 +1,6 @@
+import db  from "../firebase/config";
+import { collection, query, where, getDocs } from "firebase/firestore";
+
 export const getAuth = async (startup, password) => {
   try {
     // Hardcoded admin credentials
