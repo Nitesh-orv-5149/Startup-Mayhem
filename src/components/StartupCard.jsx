@@ -27,7 +27,7 @@ export default function StartupCard({ startup }) {
         <div className="bg-purple-50 dark:bg-purple-900/30 p-2 rounded-xl text-center col-span-2">
           <p className="font-semibold text-purple-700 dark:text-purple-300 text-sm">CAC / LTV</p>
           <p className="text-gray-900 dark:text-gray-200 text-sm">
-            {startup?.cac} / {startup?.ltv}
+            {startup?.cac/startup?.ltv}
           </p>
         </div>
       </div>
