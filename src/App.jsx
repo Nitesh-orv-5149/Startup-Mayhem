@@ -18,7 +18,10 @@ export default function App() {
           path="/"
           element={
             <ProtectedRoute>
+              <>
               <HomePage />
+              <div>hello</div>
+              </>
             </ProtectedRoute>
           }
         />
@@ -33,7 +36,7 @@ export default function App() {
         <Route
           path="/admin/cards"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute adminOnly>
               <AdminDashboard />
             </ProtectedRoute>
           }
@@ -41,7 +44,7 @@ export default function App() {
         <Route
           path="/admin/teams"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute adminOnly>
               <AdminTeam />
             </ProtectedRoute>
           }
