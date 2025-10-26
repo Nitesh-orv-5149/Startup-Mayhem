@@ -11,7 +11,7 @@ const Navbar = () => {
       <div className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white font-bold">
-            SM
+            <img src="/logo.png"/>
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
             Startup Mayhem
