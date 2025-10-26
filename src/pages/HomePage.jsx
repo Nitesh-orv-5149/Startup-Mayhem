@@ -64,8 +64,8 @@ const HomePage = () => {
               Your Cards
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {ownedCards.map((card) => (
-                <ActionCard key={card.id} card={card} userId={currentUserId} />
+              {ownedCards.map((card, idx) => (
+                <ActionCard key={card.cardId || idx} card={card} readOnly={true} />
               ))}
             </div>
           </div>

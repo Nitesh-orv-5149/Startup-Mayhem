@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { buyCard } from "../firebase/Teamfunctions";
-import { useAuth } from "../context/AuthContext";
 
 export default function ActionCard({ card, userId }) {
   const handleBuy = async () => {

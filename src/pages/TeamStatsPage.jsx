@@ -1,197 +1,148 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import db from "../firebase/config";
+import Navbar from "../components/NavBar";
+import { getCard } from "../firebase/Cardfunctions";
+import { fetchTeams } from "../firebase/Teamfunctions";
 
 export default function Dashboard() {
   const [teams, setTeams] = useState([]);
-  const [filtered, setFiltered] = useState([]);
-  const [search, setSearch] = useState("");
-  const [sectorFilter, setSectorFilter] = useState("");
-  const [sectors, setSectors] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [ownedCardNames, setOwnedCardNames] = useState([]);
 
+  // Fetch teams on mount
   useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "teams"));
-        const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        setTeams(data);
-        setFiltered(data);
-        const sectorList = [...new Set(data.map((t) => t.sector).filter(Boolean))];
-        setSectors(sectorList);
-      } catch (err) {
-        console.error("Error loading teams:", err);
-      }
+    const loadTeams = async () => {
+      const data = await fetchTeams();
+      setTeams(data);
     };
-    fetchTeams();
+    loadTeams();
   }, []);
 
+  // Fetch owned card names when a team is selected
   useEffect(() => {
-    const filteredData = teams.filter((t) => {
-      const matchesSearch = t.startup?.toLowerCase().includes(search.toLowerCase());
-      const matchesSector = sectorFilter ? t.sector === sectorFilter : true;
-      return matchesSearch && matchesSector;
-    });
-    setFiltered(filteredData);
-  }, [search, sectorFilter, teams]);
+    if (!selectedTeam?.ownedCards || selectedTeam.ownedCards.length === 0) {
+      setOwnedCardNames([]);
+      return;
+    }
+
+    const fetchOwnedCards = async () => {
+      try {
+        const names = await Promise.all(
+          selectedTeam.ownedCards.map(async (cardId) => {
+            const cardData = await getCard(cardId);
+            return cardData?.cardName || "Unnamed Card";
+          })
+        );
+        setOwnedCardNames(names);
+      } catch (err) {
+        console.error("Error fetching owned cards:", err);
+      }
+    };
+
+    fetchOwnedCards();
+  }, [selectedTeam]);
 
   const handleLogout = () => {
     window.location.href = "/";
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 dark:bg-gray-950 font-display">
-      {/* Sidebar (hidden on mobile) */}
-      <aside
-        className={`fixed md:static inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-200 ${
-          menuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
-      >
-        <div className="p-4 flex flex-col h-full">
-          <h1 className="text-gray-900 dark:text-white text-xl font-bold mb-8 flex items-center gap-2">
-            
-            Startup Mayhem
-          </h1>
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950 font-display">
+      <Navbar onLogout={handleLogout} />
 
-          <nav className="flex flex-col gap-2">
-            <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary">
-              
-              <p className="text-sm font-medium leading-normal">Teams</p>
-            </div>
-          </nav>
-
-          <div className="mt-auto">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full"
-            >
-            
-              <p className="text-sm font-medium">Logout</p>
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* Top bar (mobile only) */}
-      <div className="flex md:hidden items-center justify-between p-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-30">
-        <h1 className="text-gray-900 dark:text-white text-lg font-bold flex items-center gap-2">
-          
-          Startup Mayhem
-        </h1>
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="text-gray-700 dark:text-gray-300"
-        >
-          <span className="material-symbols-outlined text-2xl">
-            {menuOpen ? "close" : "menu"}
-          </span>
-        </button>
-      </div>
-
-      {/* Main */}
-      <main className="flex-1 flex flex-col overflow-y-auto p-4 sm:p-6 md:p-8">
+      <main className="flex-1 flex flex-col overflow-y-auto p-4 sm:p-6 md:p-8 mt-16">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
-          <h1 className="text-gray-900 dark:text-white text-2xl sm:text-3xl font-bold leading-tight">
-            Team Statistics
-          </h1>
+        <h1 className="text-gray-900 dark:text-white text-2xl sm:text-3xl font-bold mb-6">
+          Teams Dashboard
+        </h1>
+
+        {/* Teams Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {teams.length === 0 ? (
+            <p className="text-gray-500 dark:text-gray-400">Loading teams...</p>
+          ) : (
+            teams.map((team) => (
+              <div
+                key={team.id}
+                onClick={() => setSelectedTeam(team)}
+                className="cursor-pointer bg-white dark:bg-gray-900 rounded-2xl shadow hover:shadow-lg transition p-5 border border-gray-100 dark:border-gray-800"
+              >
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {team.startup || "Unnamed"}
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  {team.sector || "—"}
+                </p>
+                <div className="mt-3 flex justify-between text-sm text-gray-700 dark:text-gray-300">
+                  <span>Runway: {team.runway ?? "—"}</span>
+                  <span>Budget: ${Number(team.budget || 0).toFixed(2)}</span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <input
-            type="text"
-            placeholder="Search by startup name..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 text-sm sm:text-base"
-          />
-          <select
-            value={sectorFilter}
-            onChange={(e) => setSectorFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 text-sm sm:text-base"
-          >
-            <option value="">All Sectors</option>
-            {sectors.map((sector) => (
-              <option key={sector} value={sector}>
-                {sector}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Team Modal */}
+        {selectedTeam && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-3xl w-full relative overflow-y-auto max-h-[90vh] p-6">
+              <button
+                onClick={() => setSelectedTeam(null)}
+                className="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-red-500 text-xl font-bold"
+              >
+                ✕
+              </button>
 
-        {/* Table */}
-        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-          <table className="min-w-full text-sm sm:text-base">
-            <thead className="bg-gray-100 dark:bg-gray-800">
-              <tr>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
+                {selectedTeam.startup || "Unnamed Startup"}
+              </h2>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
                 {[
-                  "Team ID",
-                  "Startup",
-                  "Sector",
-                  "Budget",
-                  "Runway",
-                  "CAC",
-                  "LTV",
-                  "Power",
-                  "Weakness",
-                ].map((h) => (
-                  <th
-                    key={h}
-                    className={`px-4 sm:px-6 py-3 ${
-                      ["Budget", "Runway", "CAC", "LTV"].includes(h)
-                        ? "text-right"
-                        : "text-left"
-                    } text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase`}
+                  { label: "Budget", value: `$${Number(selectedTeam.budget || 0).toFixed(2)}` },
+                  { label: "Runway", value: selectedTeam.runway ? `${selectedTeam.runway} months` : "—" },
+                  { label: "CAC", value: `$${selectedTeam.cac || 0}` },
+                  { label: "LTV", value: `$${selectedTeam.ltv || 0}` },
+                  { label: "Power", value: selectedTeam.power || "—" },
+                  { label: "Weakness", value: selectedTeam.weakness || "—" },
+                  { label: "Sector", value: selectedTeam.sector || "—" },
+                  { label: "Subtitle", value: selectedTeam.subtitle || "—" },
+                ].map((stat, i) => (
+                  <div
+                    key={i}
+                    className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 flex flex-col items-center justify-center shadow hover:shadow-lg transition"
                   >
-                    {h}
-                  </th>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{stat.label}</p>
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white text-center">
+                      {stat.value}
+                    </p>
+                  </div>
                 ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-              {filtered.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="9"
-                    className="text-center py-6 text-gray-500 dark:text-gray-400"
-                  >
-                    {teams.length === 0
-                      ? "Loading teams..."
-                      : "No matching teams found."}
-                  </td>
-                </tr>
-              ) : (
-                filtered.map((t) => (
-                  <tr
-                    key={t.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800/40 transition"
-                  >
-                    <td className="px-4 sm:px-6 py-3 text-gray-500">{t.id}</td>
-                    <td className="px-4 sm:px-6 py-3 font-semibold">
-                      {t.startup || "-"}
-                    </td>
-                    <td className="px-4 sm:px-6 py-3">{t.sector || "-"}</td>
-                    <td className="px-4 sm:px-6 py-3 text-right">
-                      ${t.budget || "—"}
-                    </td>
-                    <td className="px-4 sm:px-6 py-3 text-right">
-                      {t.runway || "—"}
-                    </td>
-                    <td className="px-4 sm:px-6 py-3 text-right">
-                      ${t.cac || "—"}
-                    </td>
-                    <td className="px-4 sm:px-6 py-3 text-right">
-                      ${t.ltv || "—"}
-                    </td>
-                    <td className="px-4 sm:px-6 py-3">{t.power || "—"}</td>
-                    <td className="px-4 sm:px-6 py-3">{t.weakness || "—"}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+              </div>
+
+              {/* Owned Cards */}
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                  Owned Cards
+                </h3>
+                {ownedCardNames.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {ownedCardNames.map((name, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl p-3 shadow hover:shadow-lg transition text-center"
+                      >
+                        {name}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400">No cards owned</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

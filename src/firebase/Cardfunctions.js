@@ -13,26 +13,6 @@ import {
   getDoc
 } from "firebase/firestore";
 
-// Create a new card
-export async function createCard(cardData) {
-  try {
-    const cardSchema = {
-      cardId: cardData.cardId,
-      cardName: cardData.cardName,
-      description: cardData.description || "",
-      type: cardData.type || "",
-      cardCount: cardData.cardCount,
-      price: cardData.price,
-      icon: cardData.icon || "",
-      createdAt: serverTimestamp(),
-    };
-    const docRef = await addDoc(collection(db, "cards"), cardSchema);
-    console.log("Card created with ID:", docRef.id);
-  } catch (error) {
-    console.error("Error creating card:", error);
-  }
-}
-
 // Listen to all available cards (cardCount > 0)
 export const listenToAvailableCards = (callback) => {
   const cardsRef = collection(db, "cards");
@@ -121,4 +101,48 @@ export const completePurchase = async (userId, cart, cards, userRef) => {
   });
 
   await batch.commit();
+};
+
+export const getCard = async (cardId) => {
+  if (!cardId) return null;
+
+  try {
+    const docRef = doc(db, "cards", cardId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() };
+    } else {
+      console.warn(`Card with ID ${cardId} not found`);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching card:", error);
+    return null;
+  }
+};
+
+export const getTeamCards = async (teamId) => {
+  try {
+    // 1️⃣ Fetch team document
+    const teamRef = doc(db, "teams", teamId);
+    const teamSnap = await getDoc(teamRef);
+
+    if (!teamSnap.exists()) {
+      console.log("Team not found");
+      return [];
+    }
+
+    const teamData = teamSnap.data();
+    const ownedCardIds = teamData.ownedCards || [];
+
+    // 2️⃣ Fetch each card data
+    const cardPromises = ownedCardIds.map((cardId) => getCard(cardId));
+    const cards = await Promise.all(cardPromises);
+
+    return cards; // array of full card objects
+  } catch (error) {
+    console.error("Error fetching team cards:", error);
+    return [];
+  }
 };

@@ -32,7 +32,7 @@ export default function App() {
           }
         />
         <Route
-          path="/stats"
+          path="/teams"
           element={
             <ProtectedRoute>
               <StatsPage />

@@ -1,4 +1,4 @@
-import { doc, runTransaction, arrayUnion,onSnapshot, collection, query } from "firebase/firestore";
+import { doc, runTransaction, arrayUnion,onSnapshot, collection, query,getDocs,getDoc } from "firebase/firestore";
 import db from "./config";
 
 // teamUID and cardUID are the Firestore document IDs
@@ -89,5 +89,16 @@ export const getTeam = (teamId, callback) => {
   } catch (error) {
     console.error("getTeam() failed:", error);
     return () => {}; // return dummy unsubscribe
+  }
+};
+
+export const fetchTeams = async () => {
+  try {
+    const snapshot = await getDocs(collection(db, "teams"));
+    const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return data;
+  } catch (err) {
+    console.error("Error fetching teams:", err);
+    return [];
   }
 };
