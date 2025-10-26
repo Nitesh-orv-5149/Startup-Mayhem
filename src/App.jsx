@@ -6,6 +6,7 @@ import AdminTeam from "./pages/AdminTeam";
 import HomePage from "./pages/HomePage";
 import ProtectedRoute from "./ProtectedRoute"; // import the wrapper
 import CardsPage from "./pages/CardsPage";
+import AdminSettings from "./pages/AdminSettings";
 
 export default function App() {
   return (
@@ -52,6 +53,14 @@ export default function App() {
           element={
             <ProtectedRoute adminOnly>
               <AdminTeam />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/settings"
+          element={
+            <ProtectedRoute adminOnly>
+              <AdminSettings />
             </ProtectedRoute>
           }
         />

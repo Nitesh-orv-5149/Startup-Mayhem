@@ -35,7 +35,7 @@ export default function NavbarAdmin() {
           <Link
             to="/admin/teams"
             className={`text-base font-medium ${
-              location.pathname === "/"
+              location.pathname === "/admin/teams"
                 ? "text-indigo-600 dark:text-indigo-400"
                 : "text-gray-700 dark:text-gray-300"
             } hover:text-indigo-500`}
@@ -46,13 +46,24 @@ export default function NavbarAdmin() {
           <Link
             to="/admin/cards"
             className={`text-base font-medium ${
-              location.pathname === "/cards"
+              location.pathname === "/admin/cards"
                 ? "text-indigo-600 dark:text-indigo-400"
                 : "text-gray-700 dark:text-gray-300"
             } hover:text-indigo-500`}
             onClick={() => setOpen(false)}
           >
             Cards
+          </Link>
+          <Link
+            to="/admin/settings"
+            className={`text-base font-medium ${
+              location.pathname === "/admin/settings"
+                ? "text-indigo-600 dark:text-indigo-400"
+                : "text-gray-700 dark:text-gray-300"
+            } hover:text-indigo-500`}
+            onClick={() => setOpen(false)}
+          >
+            Settings
           </Link>
         </div>
       </div>

@@ -2,7 +2,7 @@ export default function StartupCard({ startup }) {
   return (
     <div
       className="bg-blue-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-md hover:shadow-lg 
-                 transition-all overflow-hidden aspect-[4/3] flex flex-col justify-between p-5"
+                 transition-all overflow-hidden aspect-4/3 flex flex-col justify-between p-5"
     >
       {/* Header */}
       <div>
