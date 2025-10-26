@@ -1,5 +1,5 @@
 import db from "./config";
-import { addDoc,updateDoc,deleteDoc,setDoc,serverTimestamp } from "firebase/firestore";
+import { addDoc,updateDoc,deleteDoc,setDoc,serverTimestamp, collection, query, where, onSnapshot } from "firebase/firestore";
 
 export async function createCard(cardData) {
   try {
@@ -27,18 +27,16 @@ export async function createCard(cardData) {
  * @returns {Function} unsubscribe - call to stop listening
  */
 export const listenToAvailableCards = (callback) => {
-  // Query only cards with stock > 0
   const cardsRef = collection(db, "cards");
   const q = query(cardsRef, where("cardCount", ">", 0));
 
-  // Real-time listener
   const unsubscribe = onSnapshot(q, (snapshot) => {
     const availableCards = snapshot.docs.map((doc) => ({
-      id: doc.id, // UID
+      id: doc.id,
       ...doc.data()
     }));
-    callback(availableCards); // Return data to UI
+    callback(availableCards); // pass data to caller
   });
 
-  return unsubscribe; // so caller can stop listening
+  return unsubscribe; // important to allow cleanup
 };

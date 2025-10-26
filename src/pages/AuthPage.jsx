@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 
 const AuthPage = () => {
   const [startup, setStartup] = useState("");
   const [password, setPassword] = useState("");
+  const { login, loading, message, user, setUser } = useAuth(); // make sure your context allows setUser
 
-  const { login, loading, message, user } = useAuth();
+  // On component mount, check if user info exists in localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); // set user in context
+      console.log(storedUser)
+    }
+  }, [setUser]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    await login(startup, password);
+    const { success, isAdmin, startup: loggedInStartup } = await login(startup, password);
+    if (success) {
+      localStorage.setItem("user", JSON.stringify({loggedInStartup, isAdmin})); // save to localStorage
+      console.log({loggedInStartup, isAdmin})
+    }
   };
 
   return (
@@ -17,7 +29,7 @@ const AuthPage = () => {
       <h2>Startup Login</h2>
 
       {user ? (
-        <p>Welcome, {user.startup}! 🎉</p>
+        <p>Welcome, {user.loggedInStartup}! 🎉</p>
       ) : (
         <form onSubmit={handleLogin}>
           <div>
