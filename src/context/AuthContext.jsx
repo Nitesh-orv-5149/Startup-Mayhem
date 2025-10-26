@@ -1,39 +1,47 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import { getAuth } from "../firebase/Authfunctions";
 
 // Create context
 const AuthContext = createContext();
 
-// Provider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Stores logged-in user info
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(true); // Start as true until we check localStorage
   const [message, setMessage] = useState(""); // Message to display
 
-  // Login function
+  // 🧠 Load user from localStorage on mount (persistence)
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
+  }, []);
+
+  // 🔐 Login function
   const login = async (startup, password) => {
     setLoading(true);
-    const result = await getAuth(startup, password);
+    const { success, message, isAdmin, user } = await getAuth(startup, password);
 
-    if (result.success) {
-      setUser({ startup }); // You can store more user info here
+    if (success) {
+      const loggedUser = { startup, isAdmin, user };
+      setUser(loggedUser);
+      localStorage.setItem("user", JSON.stringify(loggedUser)); // save for persistence
     } else {
       setUser(null);
+      localStorage.removeItem("user");
     }
 
-    setMessage(result.message);
+    setMessage(message);
     setLoading(false);
 
-    return {
-      success: result.success,
-      isAdmin: result.isAdmin,
-      startup: startup
-    };        
+    return { success, isAdmin, user };
   };
 
-  // Logout function
+  // 🚪 Logout function
   const logout = () => {
     setUser(null);
+    localStorage.removeItem("user");
     setMessage("");
   };
 
@@ -44,5 +52,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook for easier access
+// Custom hook
 export const useAuth = () => useContext(AuthContext);

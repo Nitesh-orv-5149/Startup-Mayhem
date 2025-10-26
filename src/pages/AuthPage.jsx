@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext"; // your AuthContext
 import { getAuth } from "../firebase/Authfunctions"; // your Firebase auth function
 import { useNavigate } from "react-router-dom";
+import { getTeam } from "../firebase/Authfunctions";
 
 const AdminApp = () => {
   const navigate = useNavigate();
@@ -17,7 +18,9 @@ const AdminApp = () => {
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
+      console.log("storedUser:", storedUser);
       setUser(JSON.parse(storedUser));
+      navigate("/"); // Navigate to home/dashboard after setting user
     }
   }, [setUser]);
 
@@ -27,12 +30,13 @@ const AdminApp = () => {
     setLoading(true);
 
     // Firebase authentication function
-    const result = await getAuth(startup.trim(), password);
-    setMessage(result.message);
+    const { success, message, isAdmin, user } = await getAuth(startup.trim(), password);
+    setMessage(message);
     setLoading(false);
 
-    if (result.success) {
-      const loggedUser = { loggedInStartup: startup, isAdmin: result.isAdmin };
+    if (success) {
+      const loggedUser = { loggedInStartup: startup, isAdmin: isAdmin, userData: user };
+      const userData = await getTeam(loggedUser.loggedInStartup);
       localStorage.setItem("user", JSON.stringify(loggedUser));
       setUser(loggedUser);
       navigate("/"); // works correctly now
