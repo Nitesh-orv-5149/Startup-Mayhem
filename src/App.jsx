@@ -18,10 +18,7 @@ export default function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <>
               <HomePage />
-              <div>hello</div>
-              </>
             </ProtectedRoute>
           }
         />
