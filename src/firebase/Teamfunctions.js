@@ -32,6 +32,7 @@ export async function buyCard(teamUID, cardUID) {
       transaction.update(teamRef, {
         budget: team.budget - card.price,
         ownedCards: arrayUnion(cardUID),
+        cardCount: team.cardCount + 1
       });
     });
 
