@@ -103,3 +103,43 @@ export const fetchTeams = async () => {
     return [];
   }
 };
+
+export const checkPhase = async (teamId, currentBoughtCount = 0) => {
+  try {
+    const teamRef = doc(db, "teams", teamId);
+    const snapshot = await getDoc(teamRef);
+
+    if (!snapshot.exists()) {
+      return { canBuy: false, message: "Team not found.", maxAllowed: null };
+    }
+
+    const teamData = snapshot.data();
+    const phase = teamData.phase ?? 0;
+
+    switch (phase) {
+      case 0:
+        return { canBuy: false, message: "Phase 0: You cannot buy cards now.", maxAllowed: 0 };
+
+      case 1:
+        const remaining = Math.max(2 - currentBoughtCount, 0);
+        if (remaining > 0) {
+          return {
+            canBuy: true,
+            message: `Phase 1: You can buy ${remaining} more card(s).`,
+            maxAllowed: 2
+          };
+        } else {
+          return { canBuy: false, message: "Phase 1: You have reached your card limit.", maxAllowed: 2 };
+        }
+
+      case 3:
+        return { canBuy: true, message: "Phase 3: No restrictions on buying cards.", maxAllowed: null };
+
+      default:
+        return { canBuy: false, message: "Unknown phase, cannot buy.", maxAllowed: null };
+    }
+  } catch (error) {
+    console.error("Error checking phase:", error);
+    return { canBuy: false, message: "Error checking phase.", maxAllowed: null };
+  }
+};
