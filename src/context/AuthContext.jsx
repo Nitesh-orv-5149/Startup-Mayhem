@@ -24,7 +24,11 @@ export const AuthProvider = ({ children }) => {
     setMessage(result.message);
     setLoading(false);
 
-    return result.success;
+    return {
+      success: result.success,
+      isAdmin: result.isAdmin,
+      startup: startup
+    };        
   };
 
   // Logout function
@@ -34,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, message }}>
+    <AuthContext.Provider value={{ user, setUser, login, logout, loading, message }}>
       {children}
     </AuthContext.Provider>
   );

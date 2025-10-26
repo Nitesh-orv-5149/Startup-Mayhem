@@ -1,21 +1,25 @@
-import { useEffect } from "react";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import db from "./firebase/config";
+import { useEffect, useState } from "react";
+import { listenToAvailableCards } from "../firebase/Cardfunctions";
 
-export default function App() {
+export default function HomePage() {
+  const [cards, setCards] = useState([]);
+
   useEffect(() => {
-    const q = query(collection(db, "cards"), where("cardCount", ">", 0));
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const cards = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      console.log("Available cards:", cards);
+    const unsubscribe = listenToAvailableCards((availableCards) => {
+      setCards(availableCards);
     });
 
-    return () => unsubscribe();
+    return () => unsubscribe(); // cleanup listener
   }, []);
 
-  return <div>Check console for Firestore live cards 🔥</div>;
+  return (
+    <div>
+      <h2>Available Cards:</h2>
+      {cards.map((card) => (
+        <div key={card.id}>
+          {card.cardName} — {card.cardCount} left
+        </div>
+      ))}
+    </div>
+  );
 }
