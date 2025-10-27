@@ -74,6 +74,10 @@ export default function ActionCard({ card, cardId, userId, readOnly = false }) {
         </div>
 
         <p className="flex items-center gap-2 text-sm text-gray-200">
+          <Eye size={16} /> <span className="font-semibold">Available:</span>{" "}
+          {cardData.cardCount}
+        </p>
+        <p className="flex items-center gap-2 text-sm text-gray-200">
           <Zap size={16} /> <span className="font-semibold">Function:</span>{" "}
           {cardData.cardFunction || "No function"}
         </p>

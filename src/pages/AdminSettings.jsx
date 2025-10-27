@@ -2,10 +2,12 @@ import React from "react";
 import ResetButton from "../components/ResetButton";
 import PhaseChangeButton from "../components/PhaseChangeButton";
 import { Shield, Settings2 } from "lucide-react";
+import NavbarAdmin from "../components/NavBarAdmin";
 
 export default function AdminSettings() {
   return (
     <div className="min-h-screen bg-linear-to-b from-zinc-950 via-zinc-900 to-black text-white flex flex-col items-center py-20 px-6">
+      <NavbarAdmin/>
       <div className="w-full max-w-3xl space-y-12">
         {/* Header */}
         <div className="flex items-center justify-center gap-3">
