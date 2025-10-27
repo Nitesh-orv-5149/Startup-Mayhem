@@ -39,11 +39,11 @@ const HomePage = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-5xl mb-8">
           <StatCard
             label="Budget"
-            value={`₹${Number(userData.budget || 0).toFixed(2)}`}
+            value={`$${Number(userData.budget || 0).toFixed(2)}M`}
           />
           <StatCard label="Runway" value={userData.runway + " months"} />
-          <StatCard label="CAC" value={`₹${userData.cac || 0}`} />
-          <StatCard label="LTV" value={`₹${userData.ltv || 0}`} />
+          <StatCard label="CAC" value={`${userData.cac || 0}`} />
+          <StatCard label="LTV" value={`${userData.ltv || 0}`} />
           <StatCard label="Power" value={userData.power || "—"} />
           <StatCard label="Weakness" value={userData.weakness || "—"} />
           <StatCard label="Sector" value={userData.sector || "—"} />

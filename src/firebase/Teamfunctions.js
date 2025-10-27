@@ -3,6 +3,8 @@ import db from "./config";
 
 // teamUID and cardUID are the Firestore document IDs
 export async function buyCard(teamUID, cardUID) {
+  console.log("teamUID:", teamUID, "cardUID:", cardUID);
+
   const cardRef = doc(db, "cards", cardUID);
   const teamRef = doc(db, "teams", teamUID);
 

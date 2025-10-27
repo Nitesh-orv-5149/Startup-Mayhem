@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { listenToAvailableCards } from "../firebase/Cardfunctions";
 import ActionCard from "../components/ActionCard";
 import Navbar from "../components/NavBar";
+import { useAuth } from "../context/AuthContext";
 
 const CardsPage = () => {
   const [cards, setCards] = useState([]);
+  const { user } = useAuth();
 
   useEffect(() => {
     const unsubscribe = listenToAvailableCards(setCards);
@@ -20,7 +22,7 @@ const CardsPage = () => {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {cards.map((card) => (
-            <ActionCard key={card.id} card={card} />
+            <ActionCard key={card.id} userId={user?.userData?.id} card={card} />
           ))}
         </div>
       </div>
