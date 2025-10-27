@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import { buyCard } from "../firebase/Teamfunctions";
 import { getCard } from "../firebase/Cardfunctions";
+import { listenToTeamPhase } from "../firebase/gameState"; // ✅ Import listener
 import { Clipboard, DollarSign, Zap, Info, Eye } from "lucide-react";
 
 export default function ActionCard({ card, cardId, userId, readOnly = false }) {
   const [cardData, setCardData] = useState(card || null);
   const [isBuying, setIsBuying] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [phase, setPhase] = useState(0); // 🔥 Listen to real-time game phase
 
-  // Fetch card data if only cardId is provided
+  // 🔹 Listen to game phase in real-time
+  useEffect(() => {
+    const unsubscribe = listenToTeamPhase(setPhase);
+    return () => unsubscribe();
+  }, []);
+
+  // 🔹 Fetch card data if only cardId is provided
   useEffect(() => {
     const fetchCard = async () => {
       try {
@@ -22,20 +30,28 @@ export default function ActionCard({ card, cardId, userId, readOnly = false }) {
     if (!card && cardId) fetchCard();
   }, [cardId, card]);
 
+  // 🔹 Handle Buy
   const handleBuyConfirm = async () => {
+    // 🔸 Phase restrictions before buying
+    if (phase === 0) {
+      alert("⛔ You can’t buy cards right now! Wait for the next phase.");
+      return;
+    }
+
     setIsBuying(true);
     setShowConfirm(false);
 
-    const success = await buyCard(userId, cardData.id || cardId);
+    const success = await buyCard(userId, cardData.id || cardId, phase);
     setIsBuying(false);
 
     if (success) {
-      alert(`You bought ${cardData.cardName}!`);
+      alert(`✅ You bought ${cardData.cardName}!`);
     } else {
-      alert("Purchase failed!");
+      alert("❌ Purchase failed!");
     }
   };
 
+  // 🕓 Loading placeholder
   if (!cardData) {
     return (
       <div className="bg-gray-800 text-gray-400 rounded-3xl shadow-lg p-6 text-center">
@@ -44,7 +60,7 @@ export default function ActionCard({ card, cardId, userId, readOnly = false }) {
     );
   }
 
-  // 🧩 ReadOnly version (info only)
+  // 🧩 Read-only mode
   if (readOnly) {
     return (
       <div className="relative bg-gradient-to-t from-gray-800 to-gray-900 text-white rounded-3xl shadow-lg p-6 flex flex-col gap-3 hover:scale-105 hover:shadow-2xl transition-all">
@@ -70,7 +86,7 @@ export default function ActionCard({ card, cardId, userId, readOnly = false }) {
     );
   }
 
-  // 🧠 Interactive card version (buy option)
+  // 🧠 Full interactive card (with phase rules)
   return (
     <div className="relative bg-gradient-to-t from-gray-800 to-gray-900 text-white rounded-3xl shadow-lg p-6 flex flex-col gap-4 transform transition-all hover:scale-105 hover:shadow-2xl">
       <div className="flex items-center justify-between">
@@ -97,12 +113,21 @@ export default function ActionCard({ card, cardId, userId, readOnly = false }) {
         {cardData.effect || "No effect"}
       </p>
 
+      {/* 🔥 Disable buy button based on phase */}
       <button
-        disabled={cardData.cardCount <= 0 || isBuying}
+        disabled={cardData.cardCount <= 0 || isBuying || phase === 0}
         onClick={() => setShowConfirm(true)}
-        className="mt-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+        className={`mt-2 px-4 py-2 rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed ${
+          phase === 0
+            ? "bg-gray-500"
+            : "bg-white/20 hover:bg-white/30 text-white"
+        }`}
       >
-        {isBuying ? "Buying..." : "Buy"}
+        {phase === 0
+          ? "Locked (Phase 0)"
+          : isBuying
+          ? "Buying..."
+          : "Buy"}
       </button>
 
       {showConfirm && (

@@ -1,16 +1,22 @@
 import { doc, runTransaction, arrayUnion,onSnapshot, collection, query,getDocs,getDoc } from "firebase/firestore";
 import db from "./config";
+import { listenToTeamPhase } from "./gameState";
 
 // teamUID and cardUID are the Firestore document IDs
-export async function buyCard(teamUID, cardUID) {
-  console.log("teamUID:", teamUID, "cardUID:", cardUID);
+export async function buyCard(teamUID, cardUID, phase) {
+  console.log("teamUID:", teamUID, "cardUID:", cardUID, "phase:", phase);
 
   const cardRef = doc(db, "cards", cardUID);
   const teamRef = doc(db, "teams", teamUID);
 
   try {
+    // 🔸 Phase validation
+    if (phase === 0) {
+      alert("⛔ You can’t buy cards right now! Wait for the next phase.");
+      return false;
+    }
+
     await runTransaction(db, async (transaction) => {
-      // Step 1: Read both docs
       const cardSnap = await transaction.get(cardRef);
       const teamSnap = await transaction.get(teamRef);
 
@@ -20,21 +26,22 @@ export async function buyCard(teamUID, cardUID) {
       const card = cardSnap.data();
       const team = teamSnap.data();
 
-      // Step 2: Validations
       if (card.cardCount <= 0) throw new Error("Card sold out");
       if (team.budget < card.price) throw new Error("Insufficient budget");
       if ((team.ownedCards || []).includes(cardUID))
         throw new Error("Already owned");
 
-      // Step 3: Apply updates atomically
-      transaction.update(cardRef, {
-        cardCount: card.cardCount - 1,
-      });
+      const totalOwned = team.ownedCards?.length || 0;
+      if (phase === 1 && totalOwned >= 2)
+        throw new Error("Phase 1 limit reached: You can own at most 2 cards");
+      if (phase === 2 && totalOwned >= 4)
+        throw new Error("Phase 2 limit reached: You can own at most 4 cards");
 
+      transaction.update(cardRef, { cardCount: card.cardCount - 1 });
       transaction.update(teamRef, {
         budget: team.budget - card.price,
         ownedCards: arrayUnion(cardUID),
-        cardCount: team.cardCount + 1
+        cardCount: (team.cardCount || 0) + 1,
       });
     });
 
@@ -42,9 +49,10 @@ export async function buyCard(teamUID, cardUID) {
     return true;
   } catch (error) {
     console.error("❌ Transaction failed:", error.message);
+    alert(error.message);
     return false;
   }
-};
+}
 
 // Listen to all teams (sorted by teamScore or memberCount, whichever you use)
 export const listenToAvailableTeams = (callback) => {
