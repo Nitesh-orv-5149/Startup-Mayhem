@@ -10,7 +10,8 @@ const teamSchema = {
     power : String,
     weakness :String,
     subtitle : String,
-    ownedCards : []
+    ownedCards : [],
+    phase: Number
 }
 
 const cardSchema = {

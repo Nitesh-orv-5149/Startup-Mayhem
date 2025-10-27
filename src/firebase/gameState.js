@@ -1,5 +1,5 @@
 import db from "../firebase/config";
-import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import { collection, getDocs, updateDoc, doc, onSnapshot } from "firebase/firestore";
 import { startupsDefaultValues, actionCardsDefaultValues } from "../constants/defaultValues";
 
 export async function resetToDefaultValues() {
@@ -56,4 +56,28 @@ export async function resetToDefaultValues() {
   } catch (error) {
     console.error("❌ Reset failed:", error);
   }
+}
+
+export function listenToTeamPhase(callback) {
+  const teamRef = doc(db, "teams", "2jiA0NWYUhKGLSabejFf");
+  const unsubscribe = onSnapshot(teamRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.data();
+      callback(data.phase ?? 0); // <-- 🔥 this line calls callback()
+    }
+  });
+  return unsubscribe;
+}
+
+// --- Update phase for all teams at once ---
+export async function updatePhaseForAllTeams(newPhase) {
+  const teamsRef = collection(db, "teams");
+  const snapshot = await getDocs(teamsRef);
+
+  const updatePromises = snapshot.docs.map((teamDoc) =>
+    updateDoc(doc(db, "teams", teamDoc.id), { phase: newPhase })
+  );
+
+  await Promise.all(updatePromises);
+  console.log(`✅ Updated all teams to ${newPhase}`);
 }
