@@ -63,7 +63,7 @@ export default function ActionCard({ card, cardId, userId, readOnly = false }) {
   // 🧩 Read-only mode
   if (readOnly) {
     return (
-      <div className="relative bg-gradient-to-t from-gray-800 to-gray-900 text-white rounded-3xl shadow-lg p-6 flex flex-col gap-3 hover:scale-105 hover:shadow-2xl transition-all">
+      <div className="relative bg-linear-to-t from-gray-800 to-gray-900 text-white rounded-3xl shadow-lg p-6 flex flex-col gap-3 hover:scale-105 hover:shadow-2xl transition-all">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold flex items-center gap-2">
             <Clipboard size={24} /> {cardData.cardName}
@@ -88,7 +88,7 @@ export default function ActionCard({ card, cardId, userId, readOnly = false }) {
 
   // 🧠 Full interactive card (with phase rules)
   return (
-    <div className="relative bg-gradient-to-t from-gray-800 to-gray-900 text-white rounded-3xl shadow-lg p-6 flex flex-col gap-4 transform transition-all hover:scale-105 hover:shadow-2xl">
+    <div className="relative bg-linear-to-t from-gray-800 to-gray-900 text-white rounded-3xl shadow-lg p-6 flex flex-col gap-4 transform transition-all hover:scale-105 hover:shadow-2xl">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-bold flex items-center gap-2">
           <Clipboard size={24} /> {cardData.cardName}
