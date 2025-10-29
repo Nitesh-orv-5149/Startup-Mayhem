@@ -9,15 +9,16 @@ export async function resetToDefaultValues() {
     // --- Reset Startups ---
     const startupsSnapshot = await getDocs(collection(db, "teams"));
     const startupMap = new Map(
-      startupsDefaultValues.map((item) => [item.startup.toLowerCase(), item])
+      startupsDefaultValues.map((item) => [item.startup, item])
     );
 
     for (const document of startupsSnapshot.docs) {
       const current = document.data();
-      const defaults = startupMap.get(current.startup?.toLowerCase());
+      const defaults = startupMap.get(current.startup);
       if (!defaults) continue; // Skip if name doesn't match
 
       const updateFields = {
+        startup: defaults.startup,
         budget: defaults.budget,
         cac: defaults.cac,
         ltv: defaults.ltv,
