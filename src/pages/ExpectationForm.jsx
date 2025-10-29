@@ -52,9 +52,9 @@ const ExpectationForm = () => {
   const alreadySubmitted = user?.userData?.phase !== 0 || submitted;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-[#0f0f0f] transition-colors duration-300 font-display p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-[#0f0f0f] transition-colors duration-300 font-display p-2">
       <Navbar />
-      <div className="w-full max-w-3xl rounded-xl bg-white dark:bg-[#1a1a1a] shadow-2xl p-18">
+      <div className="w-full max-w-4xl rounded-3xl bg-white dark:bg-[#1a1a1a] shadow-2xl p-4 pt-20">
         <div className="flex flex-col items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">
             Startup Expectations Form
@@ -87,7 +87,7 @@ const ExpectationForm = () => {
                 onChange={handleChange}
                 placeholder="Enter your startup name (in CAPS)"
                 required
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] h-14 pl-4 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-3xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] h-14 pl-4 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
@@ -103,7 +103,7 @@ const ExpectationForm = () => {
                 onChange={handleChange}
                 placeholder="Enter expected Customer Acquisition Cost"
                 required
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] h-14 pl-4 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-3xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] h-14 pl-4 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
@@ -119,7 +119,7 @@ const ExpectationForm = () => {
                 onChange={handleChange}
                 placeholder="Enter expected Lifetime Value"
                 required
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] h-14 pl-4 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-3xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] h-14 pl-4 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
@@ -135,7 +135,7 @@ const ExpectationForm = () => {
                 onChange={handleChange}
                 placeholder="e.g., 12"
                 required
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] h-14 pl-4 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-3xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] h-14 pl-4 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
@@ -151,7 +151,7 @@ const ExpectationForm = () => {
                 onChange={handleChange}
                 placeholder="Enter capital left (in ₹M)"
                 required
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] h-14 pl-4 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-3xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] h-14 pl-4 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
@@ -159,7 +159,7 @@ const ExpectationForm = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`h-14 rounded-lg text-white text-base font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+              className={`h-14 rounded-3xl text-white text-base font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-indigo-600 hover:bg-indigo-700"
