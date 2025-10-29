@@ -6,7 +6,6 @@ import { getAuth } from "../firebase/Authfunctions";
 
 const ExpectationForm = () => {
   const { user } = useAuth();
-  console.log(user?.userData)
   const [formData, setFormData] = useState({
     startup: "",
     cac: "",
