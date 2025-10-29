@@ -7,6 +7,7 @@ import HomePage from "./pages/HomePage";
 import ProtectedRoute from "./ProtectedRoute"; // import the wrapper
 import CardsPage from "./pages/CardsPage";
 import AdminSettings from "./pages/AdminSettings";
+import ExpectationForm from './pages/ExpectationForm'
 
 export default function App() {
   return (
@@ -37,6 +38,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <StatsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/form"
+          element={
+            <ProtectedRoute>
+              <ExpectationForm />
             </ProtectedRoute>
           }
         />
