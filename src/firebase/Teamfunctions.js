@@ -1,4 +1,4 @@
-import { doc, runTransaction, arrayUnion,onSnapshot, collection, query,getDocs,getDoc } from "firebase/firestore";
+import { doc, runTransaction, arrayUnion,onSnapshot, collection, query,getDocs,getDoc,setDoc,serverTimestamp } from "firebase/firestore";
 import db from "./config";
 import { listenToTeamPhase } from "./gameState";
 
@@ -151,5 +151,25 @@ export const checkPhase = async (teamId, currentBoughtCount = 0) => {
   } catch (error) {
     console.error("Error checking phase:", error);
     return { canBuy: false, message: "Error checking phase.", maxAllowed: null };
+  }
+};
+
+export const submitExpectations = async (teamId, data) => {
+  try {
+    if (!teamId || !data) {
+      throw new Error("Invalid input — teamId or data missing");
+    }
+
+    // Store under "expectations" collection
+    await setDoc(doc(db, "expectations", teamId), {
+      ...data,
+      teamId,
+      timestamp: serverTimestamp(),
+    });
+
+    return { success: true, message: "Expectations submitted successfully ✅" };
+  } catch (error) {
+    console.error("Error submitting expectations:", error);
+    return { success: false, message: error.message || "Failed to submit expectations ❌" };
   }
 };

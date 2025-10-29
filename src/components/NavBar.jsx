@@ -61,6 +61,13 @@ const Navbar = () => {
           >
             Teams
           </Link>
+          <Link
+            to="/form"
+            className={`text-base font-medium ${isActive("/form")} hover:text-indigo-500`}
+            onClick={() => setOpen(false)}
+          >
+            Expectation Form
+          </Link>
         </div>
       </div>
     </nav>
